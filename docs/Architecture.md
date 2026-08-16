@@ -30,7 +30,7 @@ Each app owns its own `models.py`, `serializers.py`, `views.py`, `urls.py`. DRF 
 
 ## Database
 
-PostgreSQL, both in development (via Docker Compose) and production. Key design decisions:
+PostgreSQL, both in development and production. Development runs a native (non-Docker) PostgreSQL install — Docker Compose was tried first but caused persistent host-to-container networking failures (`docker-proxy` mishandling forwarded TCP connections, a known Ubuntu/nftables issue), so local dev now talks to Postgres directly with no container layer in between. Production can still run Postgres however is easiest on the chosen host (managed Postgres, or Docker, if that host's networking behaves). Key design decisions:
 
 - **Resource uses base + detail tables**, not one wide sparse table. `Resource` holds shared fields (title, url, academy, resource_type, status, dates). `BookDetail`/`PodcastDetail`/`VideoDetail` hold type-specific fields via a one-to-one FK to `Resource`. This keeps each table meaningful and avoids dozens of always-null columns.
 - **Academy rotation is modeled as `AcademyPeriod`**, not a field on Academy — a history of focus periods per academy, with the current one flagged. Software Engineering simply never needs a period marked ended.

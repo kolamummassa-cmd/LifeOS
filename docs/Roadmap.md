@@ -5,7 +5,7 @@
 | # | Milestone | Status |
 |---|-----------|--------|
 | 0 | Documentation | Done |
-| 1 | Project setup (Django + Vite/React, Postgres via Docker Compose) | Done |
+| 1 | Project setup (Django + Vite/React, native PostgreSQL) | Done |
 | 2 | Design system (Tailwind theme, base UI components) | Done |
 | 3 | Backend foundation (DRF, CORS, app skeleton) | Done |
 | 4 | Database models (Academy, Resource+details, Note, Goal, Journal, Habit, Person, Attachment) | Done |

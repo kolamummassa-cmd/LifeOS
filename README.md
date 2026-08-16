@@ -10,11 +10,15 @@ React + TypeScript + Vite + Tailwind (frontend) · Django + Django REST Framewor
 
 ### 1. Database
 
+PostgreSQL runs natively (no Docker) — simpler for local dev, and it's what avoided a run of Docker networking issues during setup.
+
 ```bash
-docker-compose up -d
+sudo apt install -y postgresql postgresql-contrib
+sudo systemctl enable --now postgresql
+./scripts/setup-db.sh   # creates the lifeos role + database, safe to re-run
 ```
 
-This starts PostgreSQL on `localhost:5432` with the database, user, and password already matching `backend/.env`.
+This gives you PostgreSQL on `localhost:5432` with the database, user, and password already matching `backend/.env`.
 
 ### 2. Backend
 
@@ -22,7 +26,7 @@ This starts PostgreSQL on `localhost:5432` with the database, user, and password
 cd backend
 python3 -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env   # already has matching defaults for docker-compose above
+cp .env.example .env   # already has matching defaults for the native Postgres setup above
 python manage.py migrate
 python manage.py seed_academies      # creates the 11 Academies + 4 default anchor habits
 python manage.py createsuperuser     # your login
