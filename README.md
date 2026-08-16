@@ -64,6 +64,10 @@ LifeOS/
   scripts/      One-off utility scripts
 ```
 
-## What's next
+## Deployment
 
-Milestone 17 (deployment) and Milestone 18 (Google Drive) are built but not activated — they need your own hosting accounts and Google Cloud OAuth credentials. See `docs/Roadmap.md` for the exact steps.
+Live on Render:
+- Frontend: https://lifeos-frontend-5eil.onrender.com
+- Backend: https://lifeos-backend-9kqx.onrender.com
+
+See `docs/Roadmap.md` for the Render env vars (`ALLOWED_HOSTS`, `FRONTEND_URL`, etc.) and the steps to connect Google Drive on the production environment separately from local.
