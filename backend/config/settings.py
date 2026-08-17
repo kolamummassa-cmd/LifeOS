@@ -8,6 +8,7 @@ these choices.
 from datetime import timedelta
 from pathlib import Path
 
+import dj_database_url
 from decouple import Csv, config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -75,16 +76,27 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database — PostgreSQL only. No SQLite fallback: dev and prod must match.
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME', default='lifeos'),
-        'USER': config('DB_USER', default='lifeos'),
-        'PASSWORD': config('DB_PASSWORD', default='lifeos_dev_password'),
-        'HOST': config('DB_HOST', default='localhost'),
-        'PORT': config('DB_PORT', default='5432'),
+# On Render, set a single DATABASE_URL env var (copied from the Postgres
+# instance's "Internal Database URL") and everything else is derived from
+# it, including forcing SSL. Locally, DATABASE_URL is left unset and we
+# fall back to the individual DB_* vars for the native Postgres install.
+DATABASE_URL = config('DATABASE_URL', default='')
+
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600, ssl_require=True)
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': config('DB_NAME', default='lifeos'),
+            'USER': config('DB_USER', default='lifeos'),
+            'PASSWORD': config('DB_PASSWORD', default='lifeos_dev_password'),
+            'HOST': config('DB_HOST', default='localhost'),
+            'PORT': config('DB_PORT', default='5432'),
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
