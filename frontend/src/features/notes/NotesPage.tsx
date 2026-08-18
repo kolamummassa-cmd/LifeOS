@@ -74,8 +74,8 @@ export default function NotesPage() {
   })
 
   return (
-    <div className="mx-auto flex h-full max-w-5xl gap-6">
-      <div className="w-64 shrink-0">
+    <div className="mx-auto flex h-full max-w-5xl flex-col gap-6 md:flex-row">
+      <div className="w-full shrink-0 md:w-64">
         <div className="mb-4 flex items-center justify-between">
           <h1 className="text-xl font-semibold text-text-primary">Notes</h1>
           <Button onClick={startNew}>+ New</Button>

@@ -18,7 +18,7 @@ export default function Modal({
       <div
         role="dialog"
         aria-modal="true"
-        className="w-full max-w-lg rounded-xl border border-border bg-card p-6 shadow-xl"
+        className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl border border-border bg-card p-6 shadow-xl"
       >
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-text-primary">{title}</h2>
