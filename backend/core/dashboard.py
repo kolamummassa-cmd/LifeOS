@@ -7,10 +7,9 @@ stats table — see docs/Architecture.md for why. At this data scale
 means the dashboard can never show stale numbers.
 """
 
-import datetime
-
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from django.utils import timezone
 
 from academies.models import Academy
 from goals.models import Goal
@@ -51,7 +50,7 @@ def _academy_snapshot(academy):
 
 @api_view(['GET'])
 def dashboard_summary(request):
-    today = datetime.date.today()
+    today = timezone.localdate()
 
     software_engineering = Academy.objects.filter(
         academy_type=Academy.ANCHOR, name__icontains='Software Engineering'

@@ -106,7 +106,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = config('TIME_ZONE', default='Africa/Nairobi')
 USE_I18N = True
 USE_TZ = True
 
@@ -143,6 +143,17 @@ CORS_ALLOWED_ORIGINS = [
     config('FRONTEND_URL', default='http://localhost:5173'),
 ]
 CORS_ALLOW_CREDENTIALS = True
+
+# --- Production transport security ---
+# Render terminates TLS at its proxy and forwards the original scheme in
+# this header. Local development remains HTTP when DEBUG=True.
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=not DEBUG, cast=bool)
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+SECURE_HSTS_SECONDS = config('SECURE_HSTS_SECONDS', default=0, cast=int)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = SECURE_HSTS_SECONDS > 0
+SECURE_HSTS_PRELOAD = SECURE_HSTS_SECONDS > 0
 
 # --- Google Drive integration (Milestone 18) ---
 GOOGLE_CLIENT_ID = config('GOOGLE_CLIENT_ID', default='')

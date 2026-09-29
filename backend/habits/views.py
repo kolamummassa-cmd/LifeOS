@@ -1,5 +1,4 @@
-import datetime
-
+from django.utils import timezone
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -17,7 +16,7 @@ class HabitViewSet(viewsets.ModelViewSet):
     def toggle_today(self, request, pk=None):
         """Marks (or unmarks) this habit as done for today — used by the dashboard checkboxes."""
         habit = self.get_object()
-        today = datetime.date.today()
+        today = timezone.localdate()
         log, created = HabitLog.objects.get_or_create(habit=habit, date=today, defaults={'completed': True})
         if not created:
             log.completed = not log.completed

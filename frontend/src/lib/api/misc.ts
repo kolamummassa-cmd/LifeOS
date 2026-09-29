@@ -38,3 +38,8 @@ export async function getDriveStatus() {
   const { data } = await api.get<{ configured: boolean; connected: boolean }>('/integrations/drive/status/')
   return data
 }
+
+export async function startDriveConnection() {
+  const { data } = await api.get<{ authorization_url: string }>('/integrations/drive/auth/')
+  return data
+}

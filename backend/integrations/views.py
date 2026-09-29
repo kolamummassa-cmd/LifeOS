@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseBadRequest
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -7,14 +7,12 @@ from rest_framework.response import Response
 from . import drive_service
 from .models import GoogleDriveCredential
 
-# These three endpoints are the OAuth redirect dance with Google. A plain
-# browser navigation can't attach a JWT header, and this is a single-user
-# app not exposed publicly, so AllowAny is an acceptable trade-off here —
-# see docs/Architecture.md for why this integration is kept isolated.
+# These endpoints use a browser redirect, so they cannot rely on the JWT
+# header used by the SPA. The OAuth state value is stored in the signed
+# Django session and validated on callback to prevent login CSRF.
 
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
 def drive_status(request):
     """Tells the frontend whether Google Drive is connected yet."""
     configured = bool(settings.GOOGLE_CLIENT_ID and settings.GOOGLE_CLIENT_SECRET)
@@ -23,7 +21,6 @@ def drive_status(request):
 
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
 def drive_auth_start(request):
     """
     Step 1 of Milestone 18: redirects Kolamu to Google's consent screen.
@@ -36,15 +33,22 @@ def drive_auth_start(request):
             status=400,
         )
     flow = drive_service.build_flow()
-    auth_url, _ = flow.authorization_url(access_type='offline', prompt='consent')
-    return HttpResponseRedirect(auth_url)
+    auth_url, state = flow.authorization_url(access_type='offline', prompt='consent')
+    request.session['google_oauth_state'] = state
+    return Response({'authorization_url': auth_url})
 
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def drive_auth_callback(request):
     """Step 2: Google redirects back here with a code; we exchange it for tokens."""
-    flow = drive_service.build_flow()
-    flow.fetch_token(code=request.GET.get('code'))
+    expected_state = request.session.pop('google_oauth_state', None)
+    returned_state = request.GET.get('state')
+    code = request.GET.get('code')
+    if not expected_state or returned_state != expected_state or not code:
+        return HttpResponseBadRequest('Invalid or expired Google OAuth callback.')
+
+    flow = drive_service.build_flow(state=expected_state)
+    flow.fetch_token(code=code)
     drive_service.save_credential_from_flow(flow)
     return Response({'status': 'connected'})

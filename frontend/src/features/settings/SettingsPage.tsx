@@ -6,7 +6,7 @@ import Button from '../../components/ui/Button'
 import Card from '../../components/ui/Card'
 import { Input } from '../../components/ui/Input'
 import { createHabit, deleteHabit, listHabits } from '../../lib/api/habits'
-import { createPerson, deletePerson, getDriveStatus, listPeople } from '../../lib/api/misc'
+import { createPerson, deletePerson, getDriveStatus, listPeople, startDriveConnection } from '../../lib/api/misc'
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme()
@@ -45,6 +45,10 @@ export default function SettingsPage() {
   })
 
   const { data: driveStatus } = useQuery({ queryKey: ['drive-status'], queryFn: getDriveStatus })
+  const connectDrive = useMutation({
+    mutationFn: startDriveConnection,
+    onSuccess: ({ authorization_url }) => window.location.assign(authorization_url),
+  })
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-6">
@@ -128,9 +132,9 @@ export default function SettingsPage() {
         ) : driveStatus?.configured ? (
           <div className="flex items-center gap-3">
             <Badge tone="warning">Not connected yet</Badge>
-            <a href={`${import.meta.env.VITE_API_URL}/integrations/drive/auth/`}>
-              <Button variant="secondary">Connect Google Drive</Button>
-            </a>
+            <Button variant="secondary" onClick={() => connectDrive.mutate()} disabled={connectDrive.isPending}>
+              {connectDrive.isPending ? 'Connecting…' : 'Connect Google Drive'}
+            </Button>
           </div>
         ) : (
           <p className="text-sm text-text-muted">

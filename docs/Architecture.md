@@ -54,7 +54,7 @@ Server state (anything fetched from the API) is managed with TanStack Query — 
 
 ## Authentication
 
-`djangorestframework-simplejwt`. Login returns access + refresh tokens; frontend stores the access token in memory and the refresh token in an httpOnly-style pattern (kept simple for V1: refresh token in memory + silent refresh on load). Single user, no registration flow needed beyond a Django superuser created via `createsuperuser`.
+`djangorestframework-simplejwt`. Login returns access + refresh tokens; the V1 frontend stores both in browser local storage and silently refreshes expired access tokens. This is simple for a single-user personal deployment, but should be replaced with secure httpOnly cookies before the app becomes multi-user or shares its origin with untrusted scripts. There is no registration flow; the user is created as a Django superuser.
 
 ## Google Drive integration (Milestone 18)
 
@@ -62,6 +62,8 @@ A separate `integrations` app handles:
 1. OAuth2 consent flow against Kolamu's Google account (credentials supplied by Kolamu via Google Cloud Console, stored as environment variables — never hardcoded).
 2. One-time setup: create `LifeOS/` root folder and one subfolder per Academy, store the resulting folder IDs on each `Academy.drive_folder_id`.
 3. On Attachment upload: push the file (any type) to the Drive folder matching the Attachment's academy, store the resulting `drive_file_id` back on the Attachment.
+
+The logged-in frontend requests the Google authorization URL from an authenticated API endpoint. The browser-based OAuth redirect then uses a random `state` value stored in the signed Django session and validates it on callback to prevent login CSRF. Only the callback from Google is public.
 
 This is deliberately isolated from the rest of the app — if Drive is ever unavailable or the integration changes, no other feature depends on it.
 

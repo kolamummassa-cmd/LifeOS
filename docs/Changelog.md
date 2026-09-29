@@ -1,5 +1,13 @@
 # LifeOS — Changelog
 
+## [Unreleased]
+
+### Fixed
+- Daily dashboard and habit calculations now use the configured local timezone rather than the server's system date.
+- Google Drive OAuth initiation now requires authentication, and callbacks validate a session-bound OAuth `state` value.
+- Production settings now trust Render's forwarded HTTPS scheme, redirect HTTP to HTTPS by default, and use secure session/CSRF cookies.
+- Architecture documentation now accurately describes JWT storage.
+
 ## [0.1.0] — 2026-08-11
 
 ### Added
@@ -16,7 +24,7 @@
 - Google Drive integration skeleton (OAuth flow, folder auto-creation per Academy, file upload for any attachment type) — inactive until Google Cloud credentials are added.
 - Full V1 frontend: React + TypeScript + Vite + Tailwind, dark-mode-first design system, JWT auth flow with silent refresh, pages for every V1 feature.
 - Seed command (`seed_academies`) creating all eleven Academies and the four default anchor habits.
-- 13 backend automated tests covering resource creation, goal progress, habit toggling, and academy rotation.
+- Backend tests cover resource creation, goal progress, habit toggling, Academy behavior, authentication enforcement, Google Drive folder behavior, and OAuth state validation.
 - Deployment configuration (Procfile-equivalent via gunicorn + whitenoise, environment variable templates) for Railway/Render + Vercel/Netlify.
 
 ### Notes

@@ -22,7 +22,7 @@
 | 15 | UI polish & responsive design | Done |
 | 16 | Testing (backend model/API tests) | Done |
 | 17 | Deployment (backend on Render: lifeos-backend-9kqx.onrender.com) | Deployed, being configured |
-| 18 | Google Drive integration (connected + auto-creates Academy folders locally) | Live locally; not yet connected on Render |
+| 18 | Google Drive integration (connected + auto-creates Academy folders locally) | Live locally; production connection still requires Render OAuth configuration |
 
 ## Future (explicitly not V1)
 

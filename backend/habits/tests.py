@@ -1,5 +1,4 @@
-import datetime
-
+from django.utils import timezone
 from django.contrib.auth.models import User
 from rest_framework.test import APITestCase
 
@@ -15,11 +14,11 @@ class HabitToggleTests(APITestCase):
     def test_toggle_today_creates_log(self):
         response = self.client.post(f'/api/habits/{self.habit.id}/toggle_today/')
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(HabitLog.objects.filter(habit=self.habit, date=datetime.date.today()).exists())
+        self.assertTrue(HabitLog.objects.filter(habit=self.habit, date=timezone.localdate()).exists())
 
     def test_toggle_today_twice_flips_completed(self):
         self.client.post(f'/api/habits/{self.habit.id}/toggle_today/')
         response = self.client.post(f'/api/habits/{self.habit.id}/toggle_today/')
-        log = HabitLog.objects.get(habit=self.habit, date=datetime.date.today())
+        log = HabitLog.objects.get(habit=self.habit, date=timezone.localdate())
         self.assertFalse(log.completed)
         self.assertFalse(response.data['completed'])

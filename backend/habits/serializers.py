@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.utils import timezone
 
 from .models import Habit, HabitLog
 
@@ -21,6 +22,5 @@ class HabitSerializer(serializers.ModelSerializer):
         ]
 
     def get_completed_today(self, obj):
-        import datetime
-        today = datetime.date.today()
+        today = timezone.localdate()
         return obj.logs.filter(date=today, completed=True).exists()
